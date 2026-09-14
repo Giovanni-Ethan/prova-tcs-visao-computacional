@@ -80,9 +80,9 @@ rotulos = watershed(-distancia, marcadores, mask=limpa)
 n_moedas = rotulos.max()
 print("Número de moedas detectadas:", n_moedas)
 
-#plt.imshow(rotulos, cmap='nipy_spectral')
-#plt.title(f"Segmentação final: {n_moedas} moedas")
-#plt.show()
+plt.imshow(rotulos, cmap='nipy_spectral')
+plt.title(f"Segmentação final: {n_moedas} moedas")
+plt.show()
 
 #o trem dificil que foi de entender essa parte viu nossa senhora
 
@@ -91,7 +91,7 @@ print("Número de moedas detectadas:", n_moedas)
 
 
 #--------------------------------------------------------------------------------------------------------------------------#
-#ainda assim, temos uma mancha roxa grandona no canto superior esquerdo, isso significa que aquela mancha que vimos la quando binzarizei a imagem sobreviveu tanto as opreações morfológicas quanto ao watershed, portanto, vamos utilizar outra alternativa para trata-las:
+#ainda assim, temos uma mancha roxa grandona no canto superior esquerdo, isso significa que aquela mancha que vimos la quando binzarizei sobreviveu tanto as opreações morfológicas quanto ao watershed, portanto, vamos utilizar outra alternativa para trata-las:
 
 propriedades = regionprops(rotulos)
 for regiao in propriedades: 
