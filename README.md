@@ -22,7 +22,7 @@ O pipeline de detecção segue etapas internas da própria biblioteca: a imagem 
 
 **3 carros detectados de 3 carros presentes na imagem final**, com confiança média de 0.876.
 
-![Detecção final](saida_q1_anotada.jpg)
+![Detecção final](Questao1/saida_q1_anotada.jpg)
 
 ### Etapas
 
@@ -61,7 +61,7 @@ Utilizei a imagem de moedas do próprio scikit-image (`skimage.data.coins()`). O
 
 *23 moedas contadas* na segmentação final, enquanto a imagem tem 24 moedas reais. Todas as limitações para alcançar as 24 moedas observadas por mim estão explicadas abaixo.
 
-![Segmentação final](saida_q2_segmentada.png)
+![Segmentação final](Questao2/saida_q2_segmentada.png)
 
 ### Etapas
 
@@ -72,14 +72,14 @@ Antes de processar, inspecionei a imagem para confirmar sua estrutura: é uma ma
 **2. Limiarização com Otsu**
 Apliquei o método de Otsu, que testa todos os limiares possíveis e escolhe o que melhor separa os pixels em dois grupos (fundo e objeto), com base no histograma da própria imagem. O limiar encontrado foi *107*. Como o método decide olhando só o brilho de cada pixel, isoladamente, uma região do fundo no canto superior esquerdo, mais clara que o restante do fundo, por iluminação não-uniforme, ficou acima do limiar e foi classificada como objeto, virando uma mancha branca na imagem binarizada.
 
-![Histograma da imagem](histograma.png)
-![Imagem binarizada](binarizada.png)
+![Histograma da imagem](Questao2/histograma.png)
+![Imagem binarizada](Questao2/binarizada.png)
 
 
 **3. Limpeza morfológica**
 Apliquei fechamento e depois abertura, usando `disk(3)` como elemento estruturante. Essas operações percorrem a imagem comparando cada pixel central com sua vizinhança (definida pelo formato do elemento estruturante) e decidem se ele deve mudar de valor. O objetivo era fechar buracos pequenos dentro das moedas e remover ruído, mas a mancha era grande demais (bem maior que o elemento estruturante) o que significa que se eu tentasse modificar o raio eu, querendo ou não, afetaria outras moedas também.
 
-![Depois da limpeza morfológica](limpa.png)
+![Depois da limpeza morfológica](Questao2/limpa.png)
 
 
 **4. Separação com watershed**
@@ -87,7 +87,7 @@ Como a morfologia sozinha não separa objetos encostados nem elimina a mancha, a
 
 Resultado nessa etapa: **25 regiões contadas** — 24 moedas reais + a mancha, que também gerou um pico e foi tratada como um objeto (por isso teve um objeto a mais).
 
-![Segmentação por watershed](watershed.png)
+![Segmentação por watershed](Questao2/watershed.png)
 
 
 **5. Filtro por área**
