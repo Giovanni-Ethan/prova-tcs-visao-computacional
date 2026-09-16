@@ -12,8 +12,44 @@ Utilizei IA como apoio para estudar os conceitos e a sintaxe das bibliotecas ant
 
 ## Questão 1 — Detecção e contagem com YOLO
 
-*preencher*
----
+### Abordagem
+
+Utilizei o modelo YOLOv8n (nano), da biblioteca `ultralytics`, pré-treinado no dataset COCO (mais de 200 mil imagens anotadas em 80 classes). A detecção foi feita com confiança (`conf`) de 0.5 e filtrando apenas a classe "car" (índice 2 no COCO).
+
+O pipeline de detecção segue etapas internas da própria biblioteca: a imagem é dividida em uma grade, onde cada célula é responsável por prever caixas candidatas para objetos cujo centro cai dentro dela, junto com um score de confiança e a classe prevista. Em seguida, o IoU (Intersection over Union) é calculado entre as caixas candidatas, e o algoritmo NMS (Non-Maximum Suppression) remove duplicatas, mantendo apenas a caixa de maior confiança para cada objeto.
+
+### Resultado
+
+**3 carros detectados de 3 carros presentes na imagem final**, com confiança média de 0.876.
+
+![Detecção final](saida_q1_anotada.jpg)
+
+### Etapas
+
+Antes de escrever qualquer código, estudei a teoria por trás do YOLO: como a divisão em grade funciona, o que é o score de confiança, como o IoU mede sobreposição entre caixas, e como o NMS usa isso para eliminar detecções duplicadas. Também estudei a estrutura do dataset COCO e o papel do parâmetro de confiança mínima na filtragem de detecções fracas.
+
+Com essa base, escrevi o código usando `ultralytics` e testei numa primeira imagem de estacionamento em vista aérea. O resultado foi ruim: apenas 1 carro detectado, apesar de haver muitos mais visíveis na foto, com confiança média de apenas 0.34. Para investigar, rodei o modelo sem filtro de classe e com confiança mínima bem baixa (0.05), o que revelou que o modelo alternava entre classificar os veículos como "car", "truck" e "bus", todas com confiança igualmente baixa, evidência de que, vistos estritamente de cima, esses veículos perdem as pistas visuais (perfil lateral, altura, formato de cabine) que normalmente os diferenciam. Concluí que o modelo provavelmente foi pouco exposto, durante o treinamento no COCO, a fotos de carros fotografados nesse ângulo específico.
+
+Troquei então para uma foto de estacionamento em ângulo oblíquo (nível do chão/elevação moderada), rodando exatamente o mesmo código, sem alterar nenhum parâmetro. O resultado mudou drasticamente: 3 carros detectados corretamente, com confianças individuais de 0.90, 0.87 e 0.86 — uma comparação direta que evidencia o quanto o ângulo da câmera afeta a confiabilidade do modelo.
+
+### Justificativas
+
+**Qual modelo/versão você usou e por quê?**
+
+Utilizei o modelo YOLOv8n (nano), da família YOLOv8 da Ultralytics, pré-treinado no dataset COCO — um conjunto consolidado com mais de 200 mil imagens anotadas em 80 classes, incluindo a classe "carro" usada nesta detecção. Escolhi a versão nano por ser a mais leve e rápida da família, adequada para rodar em CPU comum sem GPU dedicada, o que é suficiente para uma tarefa de teste como esta.
+
+**Como lidou com detecções duplicadas ou de baixa confiança?**
+
+Para baixa confiança, usei o parâmetro `conf=0.25` do `ultralytics`, que descarta qualquer detecção abaixo desse limiar antes mesmo de compará-la com outras. Para duplicadas, a biblioteca aplica automaticamente o algoritmo NMS: ele ordena todas as caixas candidatas de uma mesma classe por confiança, mantém a de maior confiança, calcula o IoU dela contra as demais e descarta qualquer caixa com IoU acima de um limiar (indicando que se trata do mesmo objeto físico). O processo se repete até não sobrar nenhuma caixa duplicada.
+
+Quanto à baixa confiança, encontrei um caso real durante os testes: a primeira imagem que usei era fotografada 100% de cima (vista aérea), e a confiança máxima obtida para "car" foi de apenas 0.34 — muito abaixo do que se obtém em fotos convencionais. Ao investigar com um diagnóstico sem filtro de classe, percebi que o modelo alternava entre "car", "truck" e "bus" para os mesmos objetos, todos com confiança igualmente baixa, sugerindo que o modelo foi pouco exposto a esse ângulo específico durante o treinamento no COCO e perde a capacidade de diferenciar essas classes sem a pista visual do perfil lateral do veículo. Ao trocar para uma foto em ângulo oblíquo, mantendo o mesmo código e os mesmos parâmetros, a confiança média subiu para 0.876, uma evidência direta de que o ângulo da câmera, e não o limiar de confiança em si, era a causa do problema.
+
+**Qual foi o valor de confiança médio das detecções que você contou?**
+
+A confiança média foi de **0.876**, com confianças individuais de 0.90, 0.87 e 0.86 para os três carros detectados.
+
+
+
 
 ## Questão 2 — Segmentação com visão tradicional
 
