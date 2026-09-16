@@ -1,6 +1,6 @@
 # Prova Técnica — Visão Computacional (TCS Industrial)
 
-Processo seletivo 2025 — área de Visão Computacional.
+Processo seletivo 2026 — área de Visão Computacional.
 
 
 ## Sobre o uso de IA
@@ -22,7 +22,7 @@ O pipeline de detecção segue etapas internas da própria biblioteca: a imagem 
 
 **3 carros detectados de 3 carros presentes na imagem final**, com confiança média de 0.876.
 
-![Detecção final](Questao1/saida_q1_anotada.jpg)
+![Detecção final](Questao1/runs/detect/predict/saida_q1_anotada.jpg)
 
 ### Etapas
 
